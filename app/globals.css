@@ -2,26 +2,147 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    background-color: #0F172A;
+    color: #F8FAFC;
   }
-}
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  * {
+    border-color: #334155;
+  }
+
+  ::selection {
+    background-color: rgba(229, 69, 31, 0.3);
+    color: #F8FAFC;
+  }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .font-heading {
+    font-family: var(--font-space-grotesk), system-ui, sans-serif;
   }
+  .font-body {
+    font-family: var(--font-dm-sans), system-ui, sans-serif;
+  }
+  .font-mono {
+    font-family: var(--font-jetbrains-mono), monospace;
+  }
+
+  /* Grid background pattern */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(51, 65, 85, 0.4) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(51, 65, 85, 0.4) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Radial fade mask for grid */
+  .grid-fade-mask {
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 60%, transparent 110%);
+  }
+
+  /* Glow effects */
+  .glow-brand {
+    box-shadow: 0 0 30px rgba(229, 69, 31, 0.25);
+  }
+  .glow-brand-sm {
+    box-shadow: 0 0 15px rgba(229, 69, 31, 0.2);
+  }
+
+  /* Text gradient */
+  .text-gradient-fire {
+    background: linear-gradient(135deg, #E5451F 0%, #F97316 50%, #FBBF24 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-white {
+    background: linear-gradient(to bottom, #F8FAFC 0%, rgba(248, 250, 252, 0.6) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Card surface */
+  .card-dark {
+    background-color: #1E293B;
+    border: 1px solid #334155;
+    border-radius: 16px;
+  }
+
+  .card-dark-elevated {
+    background-color: #243449;
+    border: 1px solid #3B4F68;
+    border-radius: 16px;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0F172A;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+  }
+}
+
+/* ── Flame flicker ─────────────────────────────────── */
+.flame-outer {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  animation: flickerOuter 2s ease-in-out infinite;
+}
+.flame-inner {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  animation: flickerInner 1.4s ease-in-out infinite;
+}
+.flame-core {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  animation: flickerCore 0.85s ease-in-out infinite alternate;
+}
+
+@keyframes flickerOuter {
+  0%,  100% { transform: rotate(-2deg) scaleX(1.00); }
+  20%        { transform: rotate( 1.5deg) scaleX(0.95); }
+  45%        { transform: rotate(-1deg)  scaleX(1.04); }
+  70%        { transform: rotate( 2deg)  scaleX(0.96); }
+}
+@keyframes flickerInner {
+  0%,  100% { transform: rotate( 1.5deg) scaleY(1.00); opacity: 0.75; }
+  35%        { transform: rotate(-2deg)   scaleY(1.07); opacity: 0.55; }
+  65%        { transform: rotate( 1deg)   scaleY(0.93); opacity: 0.85; }
+}
+@keyframes flickerCore {
+  from { transform: scaleY(1.00); opacity: 0.55; }
+  to   { transform: scaleY(1.10); opacity: 0.90; }
+}
+
+/* ── Floating sparks ───────────────────────────────── */
+.spark {
+  animation: sparkFloat var(--dur, 1.4s) ease-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+@keyframes sparkFloat {
+  0%   { transform: translateY(0)    translateX(0)               scale(1);   opacity: 0.85; }
+  100% { transform: translateY(-64px) translateX(var(--drift, 0px)) scale(0.1); opacity: 0;    }
+}
+
+/* ── Bouncing dots ─────────────────────────────────── */
+.bounce-dot {
+  animation: bounceDot 0.85s cubic-bezier(0.33, 1, 0.68, 1) infinite;
+  animation-delay: var(--delay, 0s);
+}
+@keyframes bounceDot {
+  0%, 100% { transform: translateY(0);    }
+  45%       { transform: translateY(-10px); }
 }
