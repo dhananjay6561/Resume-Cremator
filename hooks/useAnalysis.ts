@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import type { AnalysisResult } from '@/types/analysis';
 import { API_ROUTES } from '@/lib/api-routes';
 import { clientEnv } from '@/lib/client-env';
+import { setAnalysisResult } from '@/lib/analysis-session';
 
 const ANALYZE_RETRY_DELAY_MS = 900;
 
@@ -58,8 +59,8 @@ export function useAnalysis() {
 
       // Cache hit — navigate immediately, no artificial delay
       const cacheHit = res.headers.get('X-Cache') === 'HIT';
-      sessionStorage.setItem('analysisResult', JSON.stringify(data));
-      sessionStorage.setItem('analysisCacheHit', String(cacheHit));
+      void cacheHit;
+      setAnalysisResult(data as AnalysisResult);
       router.push('/result');
     } catch (err: unknown) {
       if (err instanceof Error && err.name === 'AbortError') return;

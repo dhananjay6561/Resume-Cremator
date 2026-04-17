@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import type { AnalysisResult, Section } from '@/types/analysis';
 import { formatResultAsText } from '@/lib/analysis-utils';
 import { scoreColor } from '@/lib/score-color';
+import { clearAnalysisResult, getAnalysisResult } from '@/lib/analysis-session';
 import { ScoreGauge } from '@/components/ScoreGauge';
 import { BreakdownBars } from '@/components/BreakdownBars';
 import { RoastCard } from '@/components/RoastCard';
@@ -25,13 +26,16 @@ export default function ResultPage() {
   const sectionRefs = React.useRef<Record<string, HTMLDivElement | null>>({});
 
   React.useEffect(() => {
-    const stored = sessionStorage.getItem('analysisResult');
-    if (!stored) { router.push('/'); return; }
-    try {
-      const parsed = JSON.parse(stored);
-      if (!parsed?.ats_score) { setLoadError(true); return; }
-      setResult(parsed);
-    } catch { setLoadError(true); }
+    const stored = getAnalysisResult();
+    if (!stored) {
+      router.push('/');
+      return;
+    }
+    if (!stored?.ats_score) {
+      setLoadError(true);
+      return;
+    }
+    setResult(stored);
   }, [router]);
 
   if (loadError) {
@@ -69,7 +73,7 @@ export default function ResultPage() {
   if (!result) return null;
 
   const handleStartOver = () => {
-    sessionStorage.removeItem('analysisResult');
+    clearAnalysisResult();
     router.push('/');
   };
 
