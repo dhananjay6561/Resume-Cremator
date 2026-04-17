@@ -5,7 +5,6 @@ import { motion, type Variants } from 'framer-motion';
 import { InputToggle } from './input-toggle';
 import { TextInput } from './text-input';
 import { PdfUpload } from './pdf-upload';
-import { Button } from '@/components/ui/button';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
 import { useAnalysis } from '@/hooks/useAnalysis';
 
