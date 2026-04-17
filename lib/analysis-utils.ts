@@ -1,8 +1,6 @@
 import type { AnalysisResult } from '@/types/analysis';
+import { scoreColor } from '@/lib/score-color';
 
-/**
- * Pulls the first sentence from the roast string for use as a one-liner summary.
- */
 export function extractOneLiner(roast: string): string {
   const firstPara = roast.split('\n\n')[0] ?? '';
   const match = firstPara.match(/^[^.!?]+[.!?]/);
@@ -10,30 +8,30 @@ export function extractOneLiner(roast: string): string {
   return firstPara.length > 100 ? firstPara.slice(0, 97) + '…' : firstPara;
 }
 
-/**
- * Returns a Tailwind text-color class based on the ATS score.
- */
 export function scoreColorClass(score: number): string {
-  if (score >= 75) return 'text-[#16A34A]';
-  if (score >= 40) return 'text-[#D97706]';
-  return 'text-[#DC2626]';
+  return scoreColor(score).text;
 }
 
-/**
- * Serialises an AnalysisResult into a plain-text string suitable for clipboard copy.
- */
 export function formatResultAsText(result: AnalysisResult): string {
-  let text = `Resume Roast\n\n${result.roast}\n\n`;
-  text += `ATS Score: ${result.atsScore.score}/100 — ${result.atsScore.label}\n\n`;
+  let text = `Resume Analysis\n\n${result.roast}\n\n`;
+  text += `ATS Score: ${result.ats_score.overall}/100\n`;
+  text += `Verdict: ${result.ats_score.verdict}\n\n`;
   text += `Section Feedback:\n`;
-  result.sectionFeedback.forEach((sec) => {
-    text += `\n— ${sec.section} (${sec.rating}) —\n`;
+  result.sections.forEach((sec) => {
+    text += `\n— ${sec.name} (${sec.rating}) —\n`;
+    text += `${sec.roast}\n`;
     sec.issues.forEach((iss, i) => {
       text += `Issue: ${iss}\nFix: ${sec.fixes[i] ?? 'N/A'}\n\n`;
     });
   });
+  if (result.red_flags.length > 0) {
+    text += `Red Flags:\n`;
+    result.red_flags.forEach((flag) => { text += `• ${flag}\n`; });
+    text += '\n';
+  }
+  text += `Fix This First:\n${result.one_thing}\n\n`;
   text += `Rewrite Suggestions:\n`;
-  result.rewriteSuggestions.forEach((sug) => {
+  result.rewrites.forEach((sug) => {
     text += `\nOriginal: ${sug.original}\nRewritten: ${sug.rewritten}\nReason: ${sug.reason}\n`;
   });
   return text;
