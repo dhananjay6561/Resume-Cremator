@@ -1,10 +1,5 @@
 import { z } from 'zod';
 
-/**
- * Resume text constraints — read from NEXT_PUBLIC_ env vars so they are
- * consistent between client-side form validation and server-side enforcement.
- * Defaults are used only if the variables are not set.
- */
 const MIN_CHARS = parseInt(process.env.NEXT_PUBLIC_MIN_RESUME_CHARS ?? '200',   10);
 const MAX_CHARS = parseInt(process.env.NEXT_PUBLIC_MAX_RESUME_CHARS ?? '12000', 10);
 
@@ -16,3 +11,35 @@ export const analyzeRequestSchema = z.object({
 });
 
 export type AnalyzeRequest = z.infer<typeof analyzeRequestSchema>;
+
+export const ATSResultSchema = z.object({
+  roast: z.string(),
+  ats_score: z.object({
+    overall: z.number().min(0).max(100),
+    breakdown: z.object({
+      formatting: z.number(),
+      keywords: z.number(),
+      quantification: z.number(),
+      clarity: z.number(),
+      impact: z.number(),
+    }),
+    verdict: z.string(),
+  }),
+  sections: z.array(z.object({
+    name: z.string(),
+    rating: z.enum(['poor', 'average', 'good']),
+    score: z.number(),
+    roast: z.string(),
+    issues: z.array(z.string()),
+    fixes: z.array(z.string()),
+  })),
+  rewrites: z.array(z.object({
+    original: z.string(),
+    rewritten: z.string(),
+    reason: z.string(),
+  })),
+  red_flags: z.array(z.string()),
+  one_thing: z.string(),
+});
+
+export type ATSResult = z.infer<typeof ATSResultSchema>;
