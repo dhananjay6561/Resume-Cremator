@@ -1,5 +1,5 @@
 export function scoreColor(score: number) {
-  if (score <= 40) return { text: 'text-[#ff3b30]', bg: 'bg-[#ff3b30]', hex: '#ff3b30' };
-  if (score <= 70) return { text: 'text-[#f5a623]', bg: 'bg-[#f5a623]', hex: '#f5a623' };
-  return { text: 'text-[#22c55e]', bg: 'bg-[#22c55e]', hex: '#22c55e' };
+  if (score <= 40) return { text: 'text-[#B91C1C]', bg: 'bg-[#B91C1C]', hex: '#B91C1C' };
+  if (score <= 70) return { text: 'text-[#D97706]', bg: 'bg-[#D97706]', hex: '#D97706' };
+  return { text: 'text-[#15803D]', bg: 'bg-[#15803D]', hex: '#15803D' };
 }

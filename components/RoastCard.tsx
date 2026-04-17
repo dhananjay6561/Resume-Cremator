@@ -10,19 +10,19 @@ interface RoastCardProps {
 export function RoastCard({ roast, verdict }: RoastCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-      className="mb-6 rounded-2xl overflow-hidden border"
-      style={{ borderColor: 'var(--border-default)', background: 'var(--navy-800)' }}
+      transition={{ duration: 0.45, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+      className="mb-5 rounded-xl overflow-hidden"
+      style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: '0 1px 4px rgba(0,0,0,0.07)' }}
     >
-      <div className="w-full h-1" style={{ background: 'linear-gradient(90deg, var(--roast-red), var(--roast-orange), transparent)' }} />
-      <div className="px-6 pt-5 pb-6">
-        <span className="block font-mono text-5xl leading-none mb-3" style={{ color: 'var(--steel)', opacity: 0.5 }}>&ldquo;</span>
-        <p className="font-body text-base md:text-lg leading-relaxed italic mb-4" style={{ color: 'var(--text-primary)' }}>
+      <div className="w-full h-0.5" style={{ background: 'var(--steel)' }} />
+      <div className="px-5 pt-4 pb-5">
+        <span className="block font-mono text-4xl leading-none mb-2.5" style={{ color: 'var(--steel)', opacity: 0.35 }}>&ldquo;</span>
+        <p className="font-body text-base leading-relaxed italic mb-3" style={{ color: 'var(--text-primary)' }}>
           {roast}
         </p>
-        <p className="text-sm font-body" style={{ color: 'var(--text-muted)' }}>
+        <p className="text-xs font-body" style={{ color: 'var(--text-muted)' }}>
           {verdict}
         </p>
       </div>

@@ -31,11 +31,11 @@ export function BreakdownBars({ breakdown }: BreakdownBarsProps) {
         const col = scoreColor(value);
         return (
           <div key={key}>
-            <div className="flex justify-between items-center mb-1">
+            <div className="flex justify-between items-center mb-1.5">
               <span className="text-xs font-medium font-body" style={{ color: 'var(--text-secondary)' }}>{label}</span>
               <span className={`font-mono text-xs font-bold tabular-nums ${col.text}`}>{value}</span>
             </div>
-            <div className="h-1.5 w-full rounded-full" style={{ background: 'var(--border-subtle)' }}>
+            <div className="h-1.5 w-full rounded-full" style={{ background: '#E5E5E5' }}>
               <motion.div
                 className={`h-full rounded-full ${col.bg}`}
                 initial={{ width: 0 }}

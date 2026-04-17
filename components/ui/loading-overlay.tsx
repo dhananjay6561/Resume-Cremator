@@ -33,32 +33,25 @@ export function LoadingOverlay() {
   return (
     <motion.div
       className="fixed inset-0 z-50 flex flex-col items-center justify-center"
-      style={{ background: 'rgba(4,13,26,0.96)' }}
+      style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(4px)' }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.25 }}
     >
-      {/* Scanning line */}
-      <div className="absolute inset-x-0 top-0 bottom-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute left-0 right-0 h-px"
-          style={{ background: 'linear-gradient(90deg, transparent, var(--steel), transparent)' }}
-          animate={{ top: ['0%', '100%'] }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: 'linear' }}
-        />
-      </div>
-
-      <div className="relative flex flex-col items-center gap-8 px-6 text-center">
+      <div className="flex flex-col items-center gap-7 px-6 text-center">
         {/* Pulsing ring */}
         <div className="relative w-16 h-16 flex items-center justify-center">
           <motion.div
             className="absolute inset-0 rounded-full border-2"
             style={{ borderColor: 'var(--steel)' }}
-            animate={{ scale: [1, 1.4], opacity: [0.6, 0] }}
+            animate={{ scale: [1, 1.5], opacity: [0.4, 0] }}
             transition={{ duration: 1.4, repeat: Infinity, ease: 'easeOut' }}
           />
-          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(0,119,181,0.15)', border: '2px solid var(--steel)' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--steel)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div
+            className="w-10 h-10 rounded-full flex items-center justify-center"
+            style={{ background: 'var(--steel-light)', border: '2px solid var(--steel)' }}
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--steel)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
             </svg>
           </div>
@@ -68,23 +61,23 @@ export function LoadingOverlay() {
         <AnimatePresence mode="wait">
           <motion.p
             key={stepKey}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="font-heading font-bold text-xl md:text-2xl tracking-tight"
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            className="font-heading font-semibold text-lg tracking-tight"
             style={{ color: 'var(--text-primary)' }}
           >
             {STEPS[stepIndex].text}
           </motion.p>
         </AnimatePresence>
 
-        {/* Bouncing dots */}
-        <div className="flex gap-2">
+        {/* Dots */}
+        <div className="flex gap-1.5">
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="bounce-dot w-2 h-2 rounded-full"
+              className="bounce-dot w-1.5 h-1.5 rounded-full"
               style={{ background: 'var(--steel)', '--delay': `${i * 160}ms` } as React.CSSProperties}
             />
           ))}

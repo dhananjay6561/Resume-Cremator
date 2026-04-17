@@ -9,11 +9,11 @@ import { LoadingOverlay } from '@/components/ui/loading-overlay';
 import { useAnalysis } from '@/hooks/useAnalysis';
 
 const formVariants: Variants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 20 },
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: 'easeOut', delay: 0.4 },
+    transition: { duration: 0.45, ease: 'easeOut', delay: 0.3 },
   },
 };
 
@@ -57,7 +57,7 @@ export function ResumeForm() {
       >
         <InputToggle value={inputType} onChange={setInputType} />
 
-        <div className="w-full mb-6">
+        <div className="w-full mb-5">
           {inputType === 'text' ? (
             <TextInput
               value={textValue}
@@ -73,35 +73,30 @@ export function ResumeForm() {
           )}
         </div>
 
-        <motion.div
-          className="w-full flex justify-center"
+        <motion.button
+          onClick={handleSubmit}
+          disabled={isAnalyzing}
           whileHover={{ scale: isAnalyzing ? 1 : 1.01 }}
-          whileTap={{ scale: 0.98 }}
+          whileTap={{ scale: 0.99 }}
+          className="w-full font-heading text-sm font-semibold py-3 px-6 rounded-lg text-white transition-colors duration-150 cursor-pointer disabled:opacity-60"
+          style={{ background: isAnalyzing ? '#5BA3D9' : 'var(--steel)' }}
         >
-          <button
-            onClick={handleSubmit}
-            disabled={isAnalyzing}
-            className="w-full md:w-[320px] font-heading text-base font-bold tracking-wide py-3 px-6 rounded-xl text-white transition-all duration-200 cursor-pointer disabled:opacity-60"
-            style={{ background: isAnalyzing ? 'var(--steel-dim)' : 'var(--steel)' }}
-          >
-            {isAnalyzing ? (
-              <span className="flex items-center justify-center gap-2">
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Analyzing...
-              </span>
-            ) : (
-              <span className="flex items-center justify-center gap-2">
-                Cremate My Resume →
-              </span>
-            )}
-          </button>
-        </motion.div>
+          {isAnalyzing ? (
+            <span className="flex items-center justify-center gap-2">
+              <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+              Analyzing...
+            </span>
+          ) : (
+            'Analyze My Resume'
+          )}
+        </motion.button>
 
         <motion.p
-          className="mt-4 text-xs text-[#334155] text-center"
+          className="mt-3 text-xs text-center"
+          style={{ color: 'var(--text-muted)' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.9 }}
+          transition={{ delay: 0.8 }}
         >
           Results are private. Nothing is stored.
         </motion.p>

@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${dmSans.variable} ${jetBrainsMono.variable}`}>
-      <body className="font-body antialiased min-h-screen" style={{ background: 'var(--navy-950)', color: 'var(--text-primary)' }}>
+      <body className="font-body antialiased min-h-screen" style={{ background: 'var(--bg-page)', color: 'var(--text-primary)' }}>
         <Navbar />
         <PageTransition>{children}</PageTransition>
       </body>
