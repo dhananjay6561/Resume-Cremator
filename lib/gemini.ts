@@ -9,7 +9,7 @@ export function getGeminiModel() {
     generationConfig: {
       responseMimeType: 'application/json',
       temperature: 0.85,
-      maxOutputTokens: 4096,
+      maxOutputTokens: 8192,
     },
   });
 }
