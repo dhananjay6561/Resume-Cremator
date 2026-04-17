@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { analyzeRequestSchema } from '@/lib/validators';
 import { getGeminiModel } from '@/lib/gemini';
-import { buildAnalysisPrompt, getSystemInstruction } from '@/lib/prompts';
+import { buildAnalysisPrompt } from '@/lib/prompts';
 import { checkRateLimit } from '@/lib/rate-limiter';
 import { env } from '@/lib/env';
 import { hashResumeText, getCachedResult, setCachedResult } from '@/lib/result-cache';
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
   // preventing gateway timeouts on Vercel/serverless. We accumulate server-side
   // and return a single JSON response so the client stays simple.
   try {
-    const prompt = `${getSystemInstruction()}\n\n${buildAnalysisPrompt(resumeText)}`;
+    const prompt = buildAnalysisPrompt(resumeText);
     const geminiStream = await getGeminiModel().generateContentStream(prompt);
 
     let accumulated = '';
