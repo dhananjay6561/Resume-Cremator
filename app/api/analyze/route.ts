@@ -4,6 +4,7 @@ import { getGeminiModel } from '@/lib/gemini';
 import { buildAnalysisPrompt } from '@/lib/prompts';
 import { checkRateLimit } from '@/lib/rate-limiter';
 import { env } from '@/lib/env';
+import { ErrorCode, jsonError } from '@/lib/api-errors';
 import { hashResumeText, getCachedResult, setCachedResult } from '@/lib/result-cache';
 
 const MAX_GEMINI_RETRIES_PER_MODEL = 2;
@@ -87,18 +88,22 @@ export async function POST(req: NextRequest) {
     windowMs: 60 * 1000,
   });
   if (!allowed) {
-    return NextResponse.json(
-      { error: 'Too many requests. Please wait a minute and try again.' },
-      { status: 429, headers: NO_STORE_HEADERS }
-    );
+    return jsonError({
+      code: ErrorCode.TooManyRequests,
+      message: 'Too many requests. Please wait a minute and try again.',
+      status: 429,
+      headers: NO_STORE_HEADERS,
+    });
   }
 
   // ── Content-Type guard ────────────────────────────────────
   if (!req.headers.get('content-type')?.includes('application/json')) {
-    return NextResponse.json(
-      { error: 'Content-Type must be application/json.' },
-      { status: 415, headers: NO_STORE_HEADERS }
-    );
+    return jsonError({
+      code: ErrorCode.UnsupportedMediaType,
+      message: 'Content-Type must be application/json.',
+      status: 415,
+      headers: NO_STORE_HEADERS,
+    });
   }
 
   const contentLength = req.headers.get('content-length');
@@ -106,7 +111,7 @@ export async function POST(req: NextRequest) {
     const parsedLength = Number.parseInt(contentLength, 10);
     if (Number.isFinite(parsedLength) && parsedLength > env.analyzeMaxBodyBytes()) {
       return NextResponse.json(
-        { error: 'Request body is too large.' },
+        { error: 'Request body is too large.', code: ErrorCode.RequestTooLarge },
         { status: 413, headers: NO_STORE_HEADERS }
       );
     }
@@ -117,15 +122,22 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body.' }, { status: 400, headers: NO_STORE_HEADERS });
+    return jsonError({
+      code: ErrorCode.InvalidJson,
+      message: 'Invalid JSON body.',
+      status: 400,
+      headers: NO_STORE_HEADERS,
+    });
   }
 
   const parseResult = analyzeRequestSchema.safeParse(body);
   if (!parseResult.success) {
-    return NextResponse.json(
-      { error: parseResult.error.issues[0].message },
-      { status: 400, headers: NO_STORE_HEADERS }
-    );
+    return jsonError({
+      code: ErrorCode.InvalidRequest,
+      message: parseResult.error.issues[0].message,
+      status: 400,
+      headers: NO_STORE_HEADERS,
+    });
   }
 
   const { resumeText } = parseResult.data;
@@ -153,7 +165,7 @@ export async function POST(req: NextRequest) {
     } catch {
       console.error('[analyze] Failed to parse Gemini JSON response.');
       return NextResponse.json(
-        { error: 'AI returned an unexpected format. Please try again.' },
+        { error: 'AI returned an unexpected format. Please try again.', code: ErrorCode.InvalidAiResponse },
         { status: 502, headers: NO_STORE_HEADERS }
       );
     }
@@ -167,7 +179,10 @@ export async function POST(req: NextRequest) {
     ) {
       const msg = (parsed as Record<string, unknown>).message;
       return NextResponse.json(
-        { error: typeof msg === 'string' ? msg : 'The submitted text does not appear to be a resume.' },
+        {
+          error: typeof msg === 'string' ? msg : 'The submitted text does not appear to be a resume.',
+          code: ErrorCode.NotAResume,
+        },
         { status: 422, headers: NO_STORE_HEADERS }
       );
     }
@@ -176,7 +191,7 @@ export async function POST(req: NextRequest) {
     if (!validatedResult.success) {
       console.error('[analyze] Gemini JSON failed schema validation.');
       return NextResponse.json(
-        { error: 'AI returned an invalid response shape. Please try again.' },
+        { error: 'AI returned an invalid response shape. Please try again.', code: ErrorCode.InvalidAiResponse },
         { status: 502, headers: NO_STORE_HEADERS }
       );
     }
@@ -194,6 +209,7 @@ export async function POST(req: NextRequest) {
         {
           error:
             'The AI service is temporarily busy. Please try again in a few seconds.',
+          code: ErrorCode.AiTemporarilyUnavailable,
         },
         { status: 503, headers: NO_STORE_HEADERS }
       );
@@ -201,9 +217,11 @@ export async function POST(req: NextRequest) {
 
     console.error('[analyze] Unexpected error:', err);
 
-    return NextResponse.json(
-      { error: 'An unexpected server error occurred. Please try again.' },
-      { status: 500, headers: NO_STORE_HEADERS }
-    );
+    return jsonError({
+      code: ErrorCode.InternalError,
+      message: 'An unexpected server error occurred. Please try again.',
+      status: 500,
+      headers: NO_STORE_HEADERS,
+    });
   }
 }
