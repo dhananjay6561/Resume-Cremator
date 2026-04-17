@@ -36,21 +36,9 @@ export const env = {
   /** Gemini model to use — optional, defaults to gemini-2.5-flash */
   geminiModel: () => process.env.GEMINI_MODEL ?? 'gemini-2.5-flash',
 
-  /**
-   * The system instruction / persona injected before every analysis prompt.
-   * This is the core IP of the product. Store in .env.local (gitignored).
-   * Supports escaped newlines: use \n in the env value for line breaks.
-   */
+  /** Optional system instruction override — prompt is now hardcoded in lib/prompts.ts */
   geminiSystemInstruction: () =>
-    require('GEMINI_SYSTEM_INSTRUCTION').replace(/\\n/g, '\n'),
-
-  /**
-   * The full analysis prompt template.
-   * Must contain {{RESUME_TEXT}}, {{MIN_CHARS}}, {{MAX_CHARS}} placeholders.
-   * Store in .env.local (gitignored). Use \n for line breaks.
-   */
-  geminiAnalysisPromptTemplate: () =>
-    require('GEMINI_ANALYSIS_PROMPT_TEMPLATE').replace(/\\n/g, '\n'),
+    (process.env.GEMINI_SYSTEM_INSTRUCTION ?? '').replace(/\\n/g, '\n'),
 
   // ── Rate limiting ─────────────────────────────────────────
   /** Max requests per IP per minute across all API routes */
