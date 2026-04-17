@@ -7,6 +7,7 @@ const MAX_CHARS = clientEnv.maxResumeChars;
 export const analyzeRequestSchema = z.object({
   resumeText: z
     .string()
+    .trim()
     .min(MIN_CHARS, `Resume text must be at least ${MIN_CHARS} characters.`)
     .max(MAX_CHARS, `Resume text must not exceed ${MAX_CHARS} characters.`),
 });
