@@ -11,8 +11,7 @@ Analyze the resume below and return ONLY a valid JSON object with this exact str
   "ats_score": {
     "overall": <0-100 integer>,
     "breakdown": {
-      "formatting": <0-100>,
-      "keywords": <0-100>,
+      "formatting": <0-100>,      "keywords": <0-100>,
       "quantification": <0-100>,
       "clarity": <0-100>,
       "impact": <0-100>
