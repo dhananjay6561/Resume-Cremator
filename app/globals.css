@@ -40,13 +40,13 @@
 
 @layer utilities {
   .font-heading {
-    font-family: var(--font-space-grotesk), system-ui, sans-serif;
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
   }
   .font-body {
-    font-family: var(--font-dm-sans), system-ui, sans-serif;
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
   }
   .font-mono {
-    font-family: var(--font-jetbrains-mono), monospace;
+    font-family: var(--font-geist-mono), monospace;
   }
 
   .card {
