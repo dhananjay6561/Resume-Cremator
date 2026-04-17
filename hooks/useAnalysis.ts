@@ -6,6 +6,12 @@ import type { AnalysisResult } from '@/types/analysis';
 import { API_ROUTES } from '@/lib/api-routes';
 import { clientEnv } from '@/lib/client-env';
 
+const ANALYZE_RETRY_DELAY_MS = 900;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export function useAnalysis() {
   const router = useRouter();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -28,14 +34,26 @@ export function useAnalysis() {
         throw new Error(`Resume text must not exceed ${clientEnv.maxResumeChars} characters.`);
       }
 
-      const res = await fetch(API_ROUTES.ANALYZE, {
+      let res = await fetch(API_ROUTES.ANALYZE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ resumeText: text }),
         signal,
       });
 
-      const data: { error?: string } & Partial<AnalysisResult> = await res.json();
+      let data: { error?: string } & Partial<AnalysisResult> = await res.json();
+
+      if (res.status === 503) {
+        await sleep(ANALYZE_RETRY_DELAY_MS);
+        res = await fetch(API_ROUTES.ANALYZE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resumeText: text }),
+          signal,
+        });
+        data = await res.json();
+      }
+
       if (!res.ok || data.error) throw new Error(data.error ?? 'Failed to analyze resume.');
 
       // Cache hit — navigate immediately, no artificial delay
