@@ -18,6 +18,22 @@ const config: Config = {
         brand: "#E5451F",
         "brand-hover": "#c93a18",
         "brand-orange": "#F97316",
+        steel: {
+          DEFAULT: "#0077b5",
+          light: "#0a8fd1",
+          dim: "#005585",
+        },
+        navy: {
+          950: "#040d1a",
+          900: "#0a0f1e",
+          800: "#0d1526",
+          700: "#111d35",
+          600: "#1a2744",
+        },
+        roast: {
+          red: "#ff3b30",
+          orange: "#ff6b35",
+        },
         surface: {
           DEFAULT: "#1E293B",
           muted: "#0F172A",
