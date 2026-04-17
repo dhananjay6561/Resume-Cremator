@@ -21,42 +21,26 @@ export function AtsBreakdown({ score }: AtsBreakdownProps) {
         aria-expanded={open}
       >
         <div className="flex items-center gap-2.5">
-          <svg
-            width="15" height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#475569"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
           </svg>
           <span className="text-sm font-bold text-[#F8FAFC] font-heading">ATS Breakdown</span>
         </div>
-
         <div className="flex items-center gap-3">
-          <span className={`font-mono text-sm font-bold tabular-nums ${scoreColorClass(score.score)}`}>
-            {score.score}
+          <span className={`font-mono text-sm font-bold tabular-nums ${scoreColorClass(score.overall)}`}>
+            {score.overall}
             <span className="text-[#334155] font-normal text-xs">/100</span>
           </span>
           <motion.svg
             animate={{ rotate: open ? 180 : 0 }}
             transition={{ duration: 0.2 }}
             xmlns="http://www.w3.org/2000/svg"
-            width="15" height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#475569"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
           >
             <polyline points="6 9 12 15 18 9" />
           </motion.svg>
         </div>
       </button>
-
       <AnimatePresence>
         {open && (
           <motion.div
