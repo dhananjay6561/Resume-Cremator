@@ -17,7 +17,7 @@ export function InputToggle({ value, onChange }: InputToggleProps) {
           type="button"
           onClick={() => onChange(type)}
           className={`relative flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 cursor-pointer z-10`}
-          style={{ color: value === type ? 'var(--text-primary)' : 'var(--text-muted)', focusVisibleOutlineColor: 'var(--steel)' }}
+          style={{ color: value === type ? 'var(--text-primary)' : 'var(--text-muted)' }}
         >
           {value === type && (
             <motion.span
