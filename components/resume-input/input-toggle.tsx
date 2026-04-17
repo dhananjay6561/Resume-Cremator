@@ -10,22 +10,20 @@ interface InputToggleProps {
 
 export function InputToggle({ value, onChange }: InputToggleProps) {
   return (
-    <div className="flex p-1 gap-1 bg-[#0F172A] border border-[#334155] rounded-full w-full max-w-[280px] mx-auto mb-7 relative">
+    <div className="flex p-1 gap-1 rounded-full w-full max-w-[280px] mx-auto mb-7 relative" style={{ background: 'var(--navy-900)', border: '1px solid var(--border-default)' }}>
       {(['text', 'pdf'] as const).map((type) => (
         <button
           key={type}
           type="button"
           onClick={() => onChange(type)}
-          className={`relative flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E5451F] cursor-pointer z-10 ${
-            value === type
-              ? 'text-[#F8FAFC]'
-              : 'text-[#475569] hover:text-[#94A3B8]'
-          }`}
+          className={`relative flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 cursor-pointer z-10`}
+          style={{ color: value === type ? 'var(--text-primary)' : 'var(--text-muted)', focusVisibleOutlineColor: 'var(--steel)' }}
         >
           {value === type && (
             <motion.span
               layoutId="toggle-pill"
-              className="absolute inset-0 bg-[#1E293B] border border-[#334155] rounded-full shadow-sm z-[-1]"
+              className="absolute inset-0 rounded-full shadow-sm z-[-1]"
+              style={{ background: 'var(--navy-700)', border: '1px solid var(--border-default)' }}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
             />
           )}
