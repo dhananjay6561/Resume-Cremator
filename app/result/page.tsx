@@ -21,15 +21,47 @@ const ratingBadge = {
 export default function ResultPage() {
   const router = useRouter();
   const [result, setResult] = React.useState<AnalysisResult | null>(null);
+  const [loadError, setLoadError] = React.useState(false);
   const rightColRef = React.useRef<HTMLDivElement>(null);
   const sectionRefs = React.useRef<Record<string, HTMLDivElement | null>>({});
 
   React.useEffect(() => {
     const stored = sessionStorage.getItem('analysisResult');
     if (!stored) { router.push('/'); return; }
-    try { setResult(JSON.parse(stored)); }
-    catch { router.push('/'); }
+    try {
+      const parsed = JSON.parse(stored);
+      if (!parsed?.ats_score) { setLoadError(true); return; }
+      setResult(parsed);
+    } catch { setLoadError(true); }
   }, [router]);
+
+  if (loadError) {
+    return (
+      <main className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--navy-950)' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-md w-full text-center rounded-2xl p-8 border"
+          style={{ background: 'var(--navy-800)', borderColor: 'rgba(255,59,48,0.3)' }}
+        >
+          <p className="text-4xl mb-4">💀</p>
+          <h2 className="font-heading font-bold text-xl mb-2" style={{ color: 'var(--text-primary)' }}>
+            Analysis failed
+          </h2>
+          <p className="text-sm mb-6 font-body" style={{ color: 'var(--text-secondary)' }}>
+            The AI couldn&apos;t process your resume. Either it&apos;s blank, or even we gave up.
+          </p>
+          <button
+            onClick={() => router.push('/')}
+            className="px-6 py-2.5 rounded-xl text-sm font-semibold font-heading text-white cursor-pointer transition-opacity hover:opacity-80"
+            style={{ background: 'var(--steel)' }}
+          >
+            Try Again
+          </button>
+        </motion.div>
+      </main>
+    );
+  }
 
   if (!result) return null;
 
