@@ -79,27 +79,23 @@ export function ResumeForm() {
           whileHover={{ scale: isAnalyzing ? 1 : 1.01 }}
           whileTap={{ scale: 0.98 }}
         >
-          <Button
-            variant="fire"
+          <button
             onClick={handleSubmit}
             disabled={isAnalyzing}
-            size="lg"
-            className="w-full md:w-[320px] font-heading text-base font-bold tracking-wide"
+            className="w-full md:w-[320px] font-heading text-base font-bold tracking-wide py-3 px-6 rounded-xl text-white transition-all duration-200 cursor-pointer disabled:opacity-60"
+            style={{ background: isAnalyzing ? 'var(--steel-dim)' : 'var(--steel)' }}
           >
             {isAnalyzing ? (
-              <span className="flex items-center gap-2">
+              <span className="flex items-center justify-center gap-2">
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 Analyzing...
               </span>
             ) : (
-              <span className="flex items-center gap-2">
-                <svg width="16" height="16" viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M30 78 C10 78 4 62 4 50 C4 34 14 23 20 13 C22 24 27 27 27 27 C27 18 30 4 30 4 C30 4 56 30 56 50 C56 64 48 78 30 78Z" fill="currentColor" />
-                </svg>
-                Roast My Resume
+              <span className="flex items-center justify-center gap-2">
+                Cremate My Resume →
               </span>
             )}
-          </Button>
+          </button>
         </motion.div>
 
         <motion.p
