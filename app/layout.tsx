@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Space_Grotesk, DM_Sans, JetBrains_Mono } from 'next/font/google';
+import { Navbar } from '@/components/Navbar';
 import './globals.css';
 
 const spaceGrotesk = Space_Grotesk({
@@ -24,14 +25,11 @@ export const metadata: Metadata = {
   description: 'Get your resume roasted and rewritten by a brutally honest AI recruiter. No sugarcoating.',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${dmSans.variable} ${jetBrainsMono.variable}`}>
-      <body className="font-body antialiased bg-[#0F172A] text-[#F8FAFC] min-h-screen">
+      <body className="font-body antialiased min-h-screen" style={{ background: 'var(--navy-950)', color: 'var(--text-primary)' }}>
+        <Navbar />
         {children}
       </body>
     </html>
