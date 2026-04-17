@@ -91,14 +91,14 @@ export default function ResultPage() {
         className="sticky top-0 z-20 border-b"
         style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}
       >
-        <div className="max-w-7xl mx-auto px-5 py-2.5 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-5 py-2.5 flex items-center justify-between gap-3 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <span className={`font-mono text-sm font-bold tabular-nums ${col.text}`}>{score}/100</span>
-            <span className="text-xs font-body hidden sm:block" style={{ color: 'var(--text-muted)' }}>
+            <span className="text-[11px] sm:text-xs font-body truncate hidden min-[380px]:block" style={{ color: 'var(--text-muted)' }}>
               {result.ats_score.verdict}
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={handleCopyAll}
               className="hidden md:inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border cursor-pointer transition-colors hover:bg-slate-50 font-heading"
@@ -108,7 +108,7 @@ export default function ResultPage() {
             </button>
             <button
               onClick={handleStartOver}
-              className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md font-semibold cursor-pointer transition-colors hover:opacity-90 font-heading text-white"
+              className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs px-2.5 sm:px-3 py-1.5 rounded-md font-semibold cursor-pointer transition-colors hover:opacity-90 font-heading text-white whitespace-nowrap"
               style={{ background: 'var(--steel)' }}
             >
               Scan Again
@@ -117,15 +117,15 @@ export default function ResultPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="flex flex-col md:grid md:gap-5" style={{ gridTemplateColumns: '280px 1fr' }}>
+      <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6">
+        <div className="flex flex-col lg:grid lg:gap-5" style={{ gridTemplateColumns: '280px minmax(0, 1fr)' }}>
 
           {/* LEFT COLUMN */}
           <motion.aside
             initial={{ opacity: 0, x: -12 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-5 md:mb-0 rounded-xl overflow-hidden self-start md:sticky md:top-[57px]"
+            className="mb-5 lg:mb-0 rounded-xl overflow-hidden self-start lg:sticky lg:top-[57px]"
             style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: '0 1px 4px rgba(0,0,0,0.07)' }}
           >
             <ScoreGauge score={score} />
@@ -186,7 +186,7 @@ export default function ResultPage() {
           </motion.aside>
 
           {/* RIGHT COLUMN */}
-          <div className="space-y-5 min-w-0">
+          <div className="space-y-5 min-w-0 pb-24 md:pb-8">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -230,7 +230,7 @@ export default function ResultPage() {
 
       {/* Mobile bottom bar */}
       <div
-        className="md:hidden fixed bottom-0 left-0 right-0 px-4 py-3 border-t flex gap-2.5 z-10"
+        className="md:hidden fixed bottom-0 left-0 right-0 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] border-t flex gap-2.5 z-10"
         style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}
       >
         <button

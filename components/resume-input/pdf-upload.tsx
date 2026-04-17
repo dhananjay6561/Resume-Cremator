@@ -99,8 +99,8 @@ export function PdfUpload({ file, onFileSelect, error }: PdfUploadProps) {
                   <polyline points="9 15 11 17 15 13" />
                 </svg>
               </div>
-              <div>
-                <p className="font-heading font-semibold text-sm truncate max-w-[260px]" style={{ color: 'var(--text-primary)' }}>{file.name}</p>
+              <div className="min-w-0 w-full">
+                <p className="font-heading font-semibold text-sm break-words" style={{ color: 'var(--text-primary)' }}>{file.name}</p>
                 <p className="text-xs mt-0.5 font-medium" style={{ color: 'var(--green)' }}>{formatSize(file.size)} &middot; Ready to analyze</p>
               </div>
               <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Click or drag to replace</p>
@@ -126,7 +126,7 @@ export function PdfUpload({ file, onFileSelect, error }: PdfUploadProps) {
                 </svg>
               </motion.div>
               <div>
-                <p className="font-heading font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
+                <p className="font-heading font-semibold text-sm leading-snug" style={{ color: 'var(--text-primary)' }}>
                   {isDragActive ? 'Drop it here' : 'Click to browse or drag PDF here'}
                 </p>
                 <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>PDF only &mdash; max 5 MB</p>

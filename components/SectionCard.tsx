@@ -35,7 +35,7 @@ export function SectionCard({ section, defaultOpen = false }: SectionCardProps) 
     >
       <button
         onClick={() => setOpen((o) => !o)}
-        className={`w-full flex items-center justify-between px-4 py-3 border-l-4 ${accentBorder[section.rating]} hover:bg-slate-50 transition-colors duration-150 cursor-pointer`}
+        className={`w-full flex items-start sm:items-center justify-between gap-3 px-4 py-3 border-l-4 ${accentBorder[section.rating]} hover:bg-slate-50 transition-colors duration-150 cursor-pointer text-left`}
         aria-expanded={open}
       >
         <div className="flex items-center gap-2.5 min-w-0">
@@ -52,7 +52,7 @@ export function SectionCard({ section, defaultOpen = false }: SectionCardProps) 
             {section.name}
           </span>
         </div>
-        <div className="flex items-center gap-2 ml-3 flex-shrink-0">
+        <div className="flex flex-col items-end gap-1 sm:flex-row sm:items-center sm:gap-2 ml-3 flex-shrink-0">
           <span className={`font-mono text-xs font-bold ${col.text}`}>{section.score}</span>
           <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border font-heading ${ratingBadge[section.rating]}`}>
             {ratingLabel[section.rating]}

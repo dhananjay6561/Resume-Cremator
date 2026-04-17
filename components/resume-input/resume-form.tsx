@@ -78,7 +78,7 @@ export function ResumeForm() {
           disabled={isAnalyzing}
           whileHover={{ scale: isAnalyzing ? 1 : 1.01 }}
           whileTap={{ scale: 0.99 }}
-          className="w-full font-heading text-sm font-semibold py-3 px-6 rounded-lg text-white transition-colors duration-150 cursor-pointer disabled:opacity-60"
+          className="w-full font-heading text-sm font-semibold py-3 px-4 sm:px-6 rounded-lg text-white transition-colors duration-150 cursor-pointer disabled:opacity-60"
           style={{ background: isAnalyzing ? '#5BA3D9' : 'var(--steel)' }}
         >
           {isAnalyzing ? (

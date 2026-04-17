@@ -50,7 +50,7 @@ export function RewriteCard({ rewrite, index }: RewriteCardProps) {
 
       {/* After */}
       <div className="px-4 pt-3 pb-3 border-b" style={{ borderColor: 'var(--border)', background: 'var(--green-light)' }}>
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
           <div className="min-w-0">
             <span className="block text-[10px] font-bold uppercase tracking-widest mb-1.5 font-mono" style={{ color: 'var(--green)' }}>AFTER</span>
             <p className="text-sm font-medium leading-relaxed font-body" style={{ color: 'var(--text-primary)' }}>{rewrite.rewritten}</p>

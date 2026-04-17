@@ -38,7 +38,7 @@ export function TextInput({ value, onChange, error }: TextInputProps) {
           onChange={(e) => onChange(e.target.value)}
           maxLength={MAX}
           placeholder="Paste your resume here. Don't be shy — we've seen worse."
-          className={`w-full min-h-[280px] resize-none rounded-xl border px-4 py-3.5 text-sm font-body focus:outline-none focus:ring-2 transition-all duration-200 pb-10 leading-relaxed`}
+          className={`w-full min-h-[320px] sm:min-h-[280px] resize-none rounded-xl border px-4 py-3.5 text-sm font-body focus:outline-none focus:ring-2 transition-all duration-200 pb-16 sm:pb-10 leading-relaxed`}
           style={{
             background: 'var(--bg-card)',
             color: 'var(--text-primary)',
@@ -54,7 +54,7 @@ export function TextInput({ value, onChange, error }: TextInputProps) {
           {charCount.toLocaleString()} / {MAX.toLocaleString()}
         </div>
         {charCount > 0 && charCount < MIN && (
-          <div className="absolute bottom-3 left-4 text-[11px] font-medium" style={{ color: 'var(--red)' }}>
+          <div className="absolute bottom-8 sm:bottom-3 left-4 right-20 sm:right-auto text-[11px] font-medium leading-tight" style={{ color: 'var(--red)' }}>
             {MIN - charCount} more chars needed
           </div>
         )}
