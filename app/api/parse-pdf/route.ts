@@ -12,6 +12,10 @@ function getClientIp(req: NextRequest): string {
   );
 }
 
+function hasPdfSignature(buffer: Buffer): boolean {
+  return buffer.subarray(0, 5).toString('utf8') === '%PDF-';
+}
+
 export async function POST(req: NextRequest) {
   // ── Rate limit ────────────────────────────────────────────
   const { allowed } = checkRateLimit(getClientIp(req), {
@@ -56,7 +60,15 @@ export async function POST(req: NextRequest) {
   // ── Extract text ──────────────────────────────────────────
   let text: string;
   try {
-    text = await parsePdf(Buffer.from(await file.arrayBuffer()));
+    const buffer = Buffer.from(await file.arrayBuffer());
+    if (!hasPdfSignature(buffer)) {
+      return NextResponse.json(
+        { error: 'Invalid PDF file signature.' },
+        { status: 400, headers: NO_STORE_HEADERS }
+      );
+    }
+
+    text = await parsePdf(buffer);
   } catch (err: unknown) {
     console.error('[parse-pdf] Extraction failed:', err);
     return NextResponse.json(
