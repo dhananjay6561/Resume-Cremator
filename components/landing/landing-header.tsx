@@ -20,7 +20,7 @@ export function LandingHeader() {
           className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide font-heading"
           style={{ background: 'var(--steel-light)', color: 'var(--steel)' }}
         >
-          <span className="w-1.5 h-1.5 rounded-full animate-pulse inline-block" style={{ background: 'var(--steel)' }} />
+          <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: 'var(--steel)' }} />
           AI-Powered ATS Scanner
         </span>
       </motion.div>
