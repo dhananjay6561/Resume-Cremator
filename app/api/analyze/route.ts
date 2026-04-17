@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { analyzeRequestSchema } from '@/lib/validators';
+import { ATSResultSchema, analyzeRequestSchema } from '@/lib/validators';
 import { getGeminiModel } from '@/lib/gemini';
 import { buildAnalysisPrompt } from '@/lib/prompts';
 import { checkRateLimit } from '@/lib/rate-limiter';
@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
     try {
       parsed = JSON.parse(jsonString);
     } catch {
-      console.error('[analyze] Failed to parse Gemini JSON:', jsonString);
+      console.error('[analyze] Failed to parse Gemini JSON response.');
       return NextResponse.json(
         { error: 'AI returned an unexpected format. Please try again.' },
         { status: 502 }
@@ -154,10 +154,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Store in cache before responding
-    setCachedResult(cacheKey, parsed);
+    const validatedResult = ATSResultSchema.safeParse(parsed);
+    if (!validatedResult.success) {
+      console.error('[analyze] Gemini JSON failed schema validation.');
+      return NextResponse.json(
+        { error: 'AI returned an invalid response shape. Please try again.' },
+        { status: 502 }
+      );
+    }
 
-    return NextResponse.json(parsed, { headers: { 'X-Cache': 'MISS' } });
+    // Store in cache before responding
+    setCachedResult(cacheKey, validatedResult.data);
+
+    return NextResponse.json(validatedResult.data, { headers: { 'X-Cache': 'MISS' } });
   } catch (err: unknown) {
     if (isRetryableGeminiError(err)) {
       console.warn('[analyze] Gemini temporarily unavailable after retries/fallback:', err);
