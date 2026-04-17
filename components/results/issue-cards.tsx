@@ -2,10 +2,10 @@
 
 import * as React from 'react';
 import { motion, type Variants } from 'framer-motion';
-import type { SectionFeedback } from '@/types/analysis';
+import type { Section } from '@/types/analysis';
 
 interface IssueCardsProps {
-  sections: SectionFeedback[];
+  sections: Section[];
 }
 
 const ratingConfig = {
@@ -13,8 +13,7 @@ const ratingConfig = {
     icon: (
       <div className="w-9 h-9 rounded-xl bg-red-500/15 border border-red-500/20 flex items-center justify-center flex-shrink-0">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E5451F" strokeWidth="2.5" strokeLinecap="round">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
+          <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
         </svg>
       </div>
     ),
@@ -27,8 +26,7 @@ const ratingConfig = {
       <div className="w-9 h-9 rounded-xl bg-orange-500/15 border border-orange-500/20 flex items-center justify-center flex-shrink-0">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-          <line x1="12" y1="9" x2="12" y2="13" />
-          <line x1="12" y1="17" x2="12.01" y2="17" />
+          <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
         </svg>
       </div>
     ),
@@ -52,10 +50,7 @@ const ratingConfig = {
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.2 },
-  },
+  show: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.2 } },
 };
 
 const cardVariants: Variants = {
@@ -79,13 +74,7 @@ export function IssueCards({ sections = [] }: IssueCardsProps) {
           {topIssues.length}
         </span>
       </div>
-
-      <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 gap-3"
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-      >
+      <motion.div className="grid grid-cols-1 sm:grid-cols-2 gap-3" variants={containerVariants} initial="hidden" animate="show">
         {topIssues.map((section, i) => {
           const cfg = ratingConfig[section.rating];
           const firstIssue = section.issues[0];
@@ -99,7 +88,7 @@ export function IssueCards({ sections = [] }: IssueCardsProps) {
               {cfg.icon}
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2 mb-1">
-                  <span className="font-heading font-semibold text-sm text-[#F8FAFC] truncate">{section.section}</span>
+                  <span className="font-heading font-semibold text-sm text-[#F8FAFC] truncate">{section.name}</span>
                   <span className={`flex-shrink-0 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full border ${cfg.badge}`}>
                     {cfg.label}
                   </span>
