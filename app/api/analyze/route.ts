@@ -101,6 +101,17 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const contentLength = req.headers.get('content-length');
+  if (contentLength) {
+    const parsedLength = Number.parseInt(contentLength, 10);
+    if (Number.isFinite(parsedLength) && parsedLength > env.analyzeMaxBodyBytes()) {
+      return NextResponse.json(
+        { error: 'Request body is too large.' },
+        { status: 413, headers: NO_STORE_HEADERS }
+      );
+    }
+  }
+
   // ── Parse & validate body ─────────────────────────────────
   let body: unknown;
   try {

@@ -69,4 +69,7 @@ export const env = {
 
   /** Maximum time to spend parsing a PDF before aborting the request */
   pdfParseTimeoutMs: () => optionalInt('PDF_PARSE_TIMEOUT_MS', 10000),
+
+  /** Maximum accepted JSON request size in bytes for analysis requests */
+  analyzeMaxBodyBytes: () => optionalInt('ANALYZE_MAX_BODY_BYTES', 32 * 1024),
 } as const;
