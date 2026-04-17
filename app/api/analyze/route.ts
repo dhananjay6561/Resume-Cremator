@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ATSResultSchema, analyzeRequestSchema } from '@/lib/validators';
 import { getGeminiModel } from '@/lib/gemini';
 import { buildAnalysisPrompt } from '@/lib/prompts';
+import { getClientIp } from '@/lib/client-ip';
 import { checkRateLimit } from '@/lib/rate-limiter';
 import { env } from '@/lib/env';
 import { ErrorCode, jsonError } from '@/lib/api-errors';
@@ -10,14 +11,6 @@ import { hashResumeText, getCachedResult, setCachedResult } from '@/lib/result-c
 const MAX_GEMINI_RETRIES_PER_MODEL = 2;
 const BASE_BACKOFF_MS = 600;
 const NO_STORE_HEADERS = { 'Cache-Control': 'no-store' } as const;
-
-function getClientIp(req: NextRequest): string {
-  return (
-    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
-    req.headers.get('x-real-ip') ??
-    '127.0.0.1'
-  );
-}
 
 function stripMarkdownFences(raw: string): string {
   return raw

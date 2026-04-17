@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parsePdf } from '@/lib/pdf';
+import { getClientIp } from '@/lib/client-ip';
 import { checkRateLimit } from '@/lib/rate-limiter';
 import { env } from '@/lib/env';
 import { ErrorCode, jsonError } from '@/lib/api-errors';
 const NO_STORE_HEADERS = { 'Cache-Control': 'no-store' } as const;
-
-function getClientIp(req: NextRequest): string {
-  return (
-    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
-    req.headers.get('x-real-ip') ??
-    '127.0.0.1'
-  );
-}
 
 function hasPdfSignature(buffer: Buffer): boolean {
   return buffer.subarray(0, 5).toString('utf8') === '%PDF-';
