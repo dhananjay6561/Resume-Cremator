@@ -6,6 +6,9 @@ import { checkRateLimit } from '@/lib/rate-limiter';
 import { env } from '@/lib/env';
 import { hashResumeText, getCachedResult, setCachedResult } from '@/lib/result-cache';
 
+const MAX_GEMINI_RETRIES_PER_MODEL = 2;
+const BASE_BACKOFF_MS = 600;
+
 function getClientIp(req: NextRequest): string {
   return (
     req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
@@ -20,6 +23,60 @@ function stripMarkdownFences(raw: string): string {
     .replace(/^```\s*/i, '')
     .replace(/\s*```$/i, '')
     .trim();
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function getGeminiStatusCode(err: unknown): number | null {
+  if (!err || typeof err !== 'object') return null;
+
+  const maybeStatus = (err as { status?: unknown }).status;
+  if (typeof maybeStatus === 'number') return maybeStatus;
+
+  const message = (err as { message?: unknown }).message;
+  if (typeof message !== 'string') return null;
+
+  const match = message.match(/\[(\d{3})\s+/);
+  return match ? Number(match[1]) : null;
+}
+
+function isRetryableGeminiError(err: unknown): boolean {
+  const status = getGeminiStatusCode(err);
+  return status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
+}
+
+async function generateWithRetry(prompt: string): Promise<string> {
+  const modelCandidates = [env.geminiModel(), ...env.geminiFallbackModels()];
+  const uniqueModelCandidates = [...new Set(modelCandidates)];
+  let lastError: unknown;
+
+  for (const modelName of uniqueModelCandidates) {
+    for (let attempt = 1; attempt <= MAX_GEMINI_RETRIES_PER_MODEL; attempt += 1) {
+      try {
+        const geminiStream = await getGeminiModel(modelName).generateContentStream(prompt);
+        let accumulated = '';
+        for await (const chunk of geminiStream.stream) {
+          accumulated += chunk.text();
+        }
+        return accumulated;
+      } catch (err: unknown) {
+        lastError = err;
+
+        if (!isRetryableGeminiError(err)) {
+          throw err;
+        }
+
+        if (attempt < MAX_GEMINI_RETRIES_PER_MODEL) {
+          const delay = BASE_BACKOFF_MS * 2 ** (attempt - 1);
+          await sleep(delay);
+        }
+      }
+    }
+  }
+
+  throw lastError;
 }
 
 export async function POST(req: NextRequest) {
@@ -68,12 +125,7 @@ export async function POST(req: NextRequest) {
   // and return a single JSON response so the client stays simple.
   try {
     const prompt = buildAnalysisPrompt(resumeText);
-    const geminiStream = await getGeminiModel().generateContentStream(prompt);
-
-    let accumulated = '';
-    for await (const chunk of geminiStream.stream) {
-      accumulated += chunk.text();
-    }
+    const accumulated = await generateWithRetry(prompt);
 
     const jsonString = stripMarkdownFences(accumulated);
 
@@ -107,7 +159,19 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(parsed, { headers: { 'X-Cache': 'MISS' } });
   } catch (err: unknown) {
+    if (isRetryableGeminiError(err)) {
+      console.warn('[analyze] Gemini temporarily unavailable after retries/fallback:', err);
+      return NextResponse.json(
+        {
+          error:
+            'The AI service is temporarily busy. Please try again in a few seconds.',
+        },
+        { status: 503 }
+      );
+    }
+
     console.error('[analyze] Unexpected error:', err);
+
     return NextResponse.json(
       { error: 'An unexpected server error occurred. Please try again.' },
       { status: 500 }
