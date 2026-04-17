@@ -38,6 +38,11 @@ function optionalCsv(key: string): string[] {
     .filter(Boolean);
 }
 
+function optionalString(key: string): string | null {
+  const value = process.env[key]?.trim();
+  return value ? value : null;
+}
+
 export const env = {
   // ── AI ────────────────────────────────────────────────────
   /** Google AI Studio API key — required */
@@ -72,4 +77,10 @@ export const env = {
 
   /** Maximum accepted JSON request size in bytes for analysis requests */
   analyzeMaxBodyBytes: () => optionalInt('ANALYZE_MAX_BODY_BYTES', 32 * 1024),
+
+  /** Optional Upstash Redis REST URL for shared rate limiting */
+  upstashRedisRestUrl: () => optionalString('UPSTASH_REDIS_REST_URL'),
+
+  /** Optional Upstash Redis REST token for shared rate limiting */
+  upstashRedisRestToken: () => optionalString('UPSTASH_REDIS_REST_TOKEN'),
 } as const;

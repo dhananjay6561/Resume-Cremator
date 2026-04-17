@@ -21,7 +21,7 @@ async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T
 
 export async function POST(req: NextRequest) {
   // ── Rate limit ────────────────────────────────────────────
-  const { allowed } = checkRateLimit(getClientIp(req), {
+  const { allowed } = await checkRateLimit(`parse-pdf:${getClientIp(req)}`, {
     limit: env.rateLimitPerMinute(),
     windowMs: 60 * 1000,
   });

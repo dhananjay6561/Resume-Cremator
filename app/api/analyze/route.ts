@@ -76,7 +76,7 @@ async function generateWithRetry(prompt: string): Promise<string> {
 
 export async function POST(req: NextRequest) {
   // ── Rate limit ────────────────────────────────────────────
-  const { allowed } = checkRateLimit(getClientIp(req), {
+  const { allowed } = await checkRateLimit(`analyze:${getClientIp(req)}`, {
     limit: env.rateLimitPerMinute(),
     windowMs: 60 * 1000,
   });
