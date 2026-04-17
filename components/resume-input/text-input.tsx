@@ -38,11 +38,12 @@ export function TextInput({ value, onChange, error }: TextInputProps) {
           onChange={(e) => onChange(e.target.value)}
           maxLength={MAX}
           placeholder="Paste your resume here. Don't be shy — we've seen worse."
-          className={`w-full min-h-[300px] resize-none rounded-2xl border bg-[#1E293B] px-5 py-4 text-sm font-body text-[#F8FAFC] placeholder:text-[#334155] focus:outline-none focus:ring-2 transition-all duration-200 pb-10 leading-relaxed ${
+          className={`w-full min-h-[300px] resize-none rounded-2xl border px-5 py-4 text-sm font-body focus:outline-none focus:ring-2 transition-all duration-200 pb-10 leading-relaxed ${
             error
-              ? 'border-[#E5451F]/60 focus:ring-[#E5451F]/20 focus:border-[#E5451F]'
-              : 'border-[#334155] focus:ring-[#E5451F]/20 focus:border-[#475569]'
+              ? 'focus:ring-[#ff3b30]/20 focus:border-[#ff3b30]'
+              : 'focus:ring-[#0077b5]/20 focus:border-[#0077b5]'
           }`}
+          style={{ background: 'var(--navy-800)', color: 'var(--text-primary)', borderColor: error ? 'rgba(255,59,48,0.4)' : 'var(--border-default)' }}
         />
         <div className={`absolute bottom-3 right-4 text-[11px] font-mono ${countColor}`}>
           {charCount.toLocaleString()} / {MAX.toLocaleString()}
