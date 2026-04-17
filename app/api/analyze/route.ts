@@ -8,6 +8,7 @@ import { hashResumeText, getCachedResult, setCachedResult } from '@/lib/result-c
 
 const MAX_GEMINI_RETRIES_PER_MODEL = 2;
 const BASE_BACKOFF_MS = 600;
+const NO_STORE_HEADERS = { 'Cache-Control': 'no-store' } as const;
 
 function getClientIp(req: NextRequest): string {
   return (
@@ -88,13 +89,16 @@ export async function POST(req: NextRequest) {
   if (!allowed) {
     return NextResponse.json(
       { error: 'Too many requests. Please wait a minute and try again.' },
-      { status: 429 }
+      { status: 429, headers: NO_STORE_HEADERS }
     );
   }
 
   // ── Content-Type guard ────────────────────────────────────
   if (!req.headers.get('content-type')?.includes('application/json')) {
-    return NextResponse.json({ error: 'Content-Type must be application/json.' }, { status: 415 });
+    return NextResponse.json(
+      { error: 'Content-Type must be application/json.' },
+      { status: 415, headers: NO_STORE_HEADERS }
+    );
   }
 
   // ── Parse & validate body ─────────────────────────────────
@@ -102,12 +106,15 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body.' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid JSON body.' }, { status: 400, headers: NO_STORE_HEADERS });
   }
 
   const parseResult = analyzeRequestSchema.safeParse(body);
   if (!parseResult.success) {
-    return NextResponse.json({ error: parseResult.error.issues[0].message }, { status: 400 });
+    return NextResponse.json(
+      { error: parseResult.error.issues[0].message },
+      { status: 400, headers: NO_STORE_HEADERS }
+    );
   }
 
   const { resumeText } = parseResult.data;
@@ -116,7 +123,7 @@ export async function POST(req: NextRequest) {
   const cacheKey = hashResumeText(resumeText);
   const cached = getCachedResult(cacheKey);
   if (cached) {
-    return NextResponse.json(cached, { headers: { 'X-Cache': 'HIT' } });
+    return NextResponse.json(cached, { headers: { ...NO_STORE_HEADERS, 'X-Cache': 'HIT' } });
   }
 
   // ── Call Gemini (streaming internally) ────────────────────
@@ -136,7 +143,7 @@ export async function POST(req: NextRequest) {
       console.error('[analyze] Failed to parse Gemini JSON response.');
       return NextResponse.json(
         { error: 'AI returned an unexpected format. Please try again.' },
-        { status: 502 }
+        { status: 502, headers: NO_STORE_HEADERS }
       );
     }
 
@@ -150,7 +157,7 @@ export async function POST(req: NextRequest) {
       const msg = (parsed as Record<string, unknown>).message;
       return NextResponse.json(
         { error: typeof msg === 'string' ? msg : 'The submitted text does not appear to be a resume.' },
-        { status: 422 }
+        { status: 422, headers: NO_STORE_HEADERS }
       );
     }
 
@@ -159,14 +166,16 @@ export async function POST(req: NextRequest) {
       console.error('[analyze] Gemini JSON failed schema validation.');
       return NextResponse.json(
         { error: 'AI returned an invalid response shape. Please try again.' },
-        { status: 502 }
+        { status: 502, headers: NO_STORE_HEADERS }
       );
     }
 
     // Store in cache before responding
     setCachedResult(cacheKey, validatedResult.data);
 
-    return NextResponse.json(validatedResult.data, { headers: { 'X-Cache': 'MISS' } });
+    return NextResponse.json(validatedResult.data, {
+      headers: { ...NO_STORE_HEADERS, 'X-Cache': 'MISS' },
+    });
   } catch (err: unknown) {
     if (isRetryableGeminiError(err)) {
       console.warn('[analyze] Gemini temporarily unavailable after retries/fallback:', err);
@@ -175,7 +184,7 @@ export async function POST(req: NextRequest) {
           error:
             'The AI service is temporarily busy. Please try again in a few seconds.',
         },
-        { status: 503 }
+        { status: 503, headers: NO_STORE_HEADERS }
       );
     }
 
@@ -183,7 +192,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { error: 'An unexpected server error occurred. Please try again.' },
-      { status: 500 }
+      { status: 500, headers: NO_STORE_HEADERS }
     );
   }
 }
