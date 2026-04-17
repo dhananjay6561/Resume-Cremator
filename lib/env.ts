@@ -66,4 +66,7 @@ export const env = {
 
   /** Maximum resume text length in characters (server validation) */
   maxResumeChars: () => optionalInt('MAX_RESUME_CHARS', 12000),
+
+  /** Maximum time to spend parsing a PDF before aborting the request */
+  pdfParseTimeoutMs: () => optionalInt('PDF_PARSE_TIMEOUT_MS', 10000),
 } as const;

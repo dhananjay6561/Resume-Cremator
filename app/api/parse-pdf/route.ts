@@ -16,6 +16,15 @@ function hasPdfSignature(buffer: Buffer): boolean {
   return buffer.subarray(0, 5).toString('utf8') === '%PDF-';
 }
 
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  return await Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      setTimeout(() => reject(new Error('PDF parse timeout')), timeoutMs).unref();
+    }),
+  ]);
+}
+
 export async function POST(req: NextRequest) {
   // ── Rate limit ────────────────────────────────────────────
   const { allowed } = checkRateLimit(getClientIp(req), {
@@ -68,7 +77,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    text = await parsePdf(buffer);
+    text = await withTimeout(parsePdf(buffer), env.pdfParseTimeoutMs());
   } catch (err: unknown) {
     console.error('[parse-pdf] Extraction failed:', err);
     return NextResponse.json(
