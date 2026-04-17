@@ -13,6 +13,14 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+async function safeJson<T>(response: Response): Promise<T | null> {
+  try {
+    return (await response.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
 export function useAnalysis() {
   const router = useRouter();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -42,7 +50,7 @@ export function useAnalysis() {
         signal,
       });
 
-      let data: { error?: string } & Partial<AnalysisResult> = await res.json();
+      let data = await safeJson<({ error?: string } & Partial<AnalysisResult>)>(res);
 
       if (res.status === 503) {
         await sleep(ANALYZE_RETRY_DELAY_MS);
@@ -52,10 +60,10 @@ export function useAnalysis() {
           body: JSON.stringify({ resumeText: text }),
           signal,
         });
-        data = await res.json();
+        data = await safeJson<({ error?: string } & Partial<AnalysisResult>)>(res);
       }
 
-      if (!res.ok || data.error) throw new Error(data.error ?? 'Failed to analyze resume.');
+      if (!res.ok || data?.error) throw new Error(data?.error ?? 'Failed to analyze resume.');
 
       // Cache hit — navigate immediately, no artificial delay
       const cacheHit = res.headers.get('X-Cache') === 'HIT';
@@ -91,9 +99,11 @@ export function useAnalysis() {
         signal,
       });
 
-      const parseData: { error?: string; text?: string } = await parseRes.json();
-      if (!parseRes.ok || parseData.error) throw new Error(parseData.error ?? 'Failed to parse PDF.');
-      if (!parseData.text) throw new Error('PDF returned no text content.');
+      const parseData = await safeJson<{ error?: string; text?: string }>(parseRes);
+      if (!parseRes.ok || parseData?.error) {
+        throw new Error(parseData?.error ?? 'Failed to parse PDF.');
+      }
+      if (!parseData?.text) throw new Error('PDF returned no text content.');
 
       await analyzeText(parseData.text);
     } catch (err: unknown) {
