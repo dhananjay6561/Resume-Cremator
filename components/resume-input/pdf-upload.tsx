@@ -54,23 +54,23 @@ export function PdfUpload({ file, onFileSelect, error }: PdfUploadProps) {
         onDrop={handleDrop}
         animate={{
           borderColor: isDragActive
-            ? '#E5451F'
+            ? '#0077b5'
             : error
-            ? 'rgba(229,69,31,0.4)'
+            ? 'rgba(255,59,48,0.4)'
             : file
             ? 'rgba(34,197,94,0.4)'
-            : '#334155',
+            : 'rgba(255,255,255,0.1)',
           backgroundColor: isDragActive
-            ? 'rgba(229,69,31,0.08)'
+            ? 'rgba(0,119,181,0.08)'
             : error
-            ? 'rgba(229,69,31,0.05)'
+            ? 'rgba(255,59,48,0.05)'
             : file
             ? 'rgba(34,197,94,0.05)'
-            : '#1E293B',
+            : 'var(--navy-800)',
           scale: isDragActive ? 1.01 : 1,
         }}
         transition={{ duration: 0.2 }}
-        whileHover={{ borderColor: '#475569' }}
+        whileHover={{ borderColor: '#0077b5' }}
         className="relative flex flex-col items-center justify-center w-full min-h-[280px] rounded-2xl border-2 border-dashed transition-colors duration-200 cursor-pointer"
       >
         <input
