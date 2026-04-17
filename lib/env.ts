@@ -83,4 +83,7 @@ export const env = {
 
   /** Optional Upstash Redis REST token for shared rate limiting */
   upstashRedisRestToken: () => optionalString('UPSTASH_REDIS_REST_TOKEN'),
+
+  /** How long analyzed resume results may stay in the in-memory server cache */
+  resultCacheTtlMs: () => optionalInt('RESULT_CACHE_TTL_MS', 30 * 60 * 1000),
 } as const;

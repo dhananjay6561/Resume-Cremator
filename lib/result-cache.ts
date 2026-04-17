@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { createHash } from 'crypto';
+import { env } from '@/lib/env';
 import { ATSResultSchema, type ATSResult } from '@/lib/validators';
 
 interface CacheEntry {
@@ -9,7 +10,6 @@ interface CacheEntry {
 }
 
 const cache = new Map<string, CacheEntry>();
-const TTL_MS     = 60 * 60 * 1000; // 1 hour
 const MAX_ENTRIES = 200;            // evict oldest when full (LRU-lite)
 
 // Purge expired entries every 10 minutes — prevents unbounded growth
@@ -48,5 +48,5 @@ export function setCachedResult(hash: string, result: ATSResult): void {
     const oldest = cache.keys().next().value;
     if (oldest) cache.delete(oldest);
   }
-  cache.set(hash, { result, expiresAt: Date.now() + TTL_MS });
+  cache.set(hash, { result, expiresAt: Date.now() + env.resultCacheTtlMs() });
 }
