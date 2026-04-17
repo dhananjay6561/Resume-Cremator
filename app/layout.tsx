@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Space_Grotesk, DM_Sans, JetBrains_Mono } from 'next/font/google';
 import { Navbar } from '@/components/Navbar';
+import { PageTransition } from '@/components/PageTransition';
 import './globals.css';
 
 const spaceGrotesk = Space_Grotesk({
@@ -30,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${spaceGrotesk.variable} ${dmSans.variable} ${jetBrainsMono.variable}`}>
       <body className="font-body antialiased min-h-screen" style={{ background: 'var(--navy-950)', color: 'var(--text-primary)' }}>
         <Navbar />
-        {children}
+        <PageTransition>{children}</PageTransition>
       </body>
     </html>
   );
