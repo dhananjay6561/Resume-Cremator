@@ -1,7 +1,8 @@
 import { z } from 'zod';
+import { clientEnv } from '@/lib/client-env';
 
-const MIN_CHARS = parseInt(process.env.NEXT_PUBLIC_MIN_RESUME_CHARS ?? '200',   10);
-const MAX_CHARS = parseInt(process.env.NEXT_PUBLIC_MAX_RESUME_CHARS ?? '12000', 10);
+const MIN_CHARS = clientEnv.minResumeChars;
+const MAX_CHARS = clientEnv.maxResumeChars;
 
 export const analyzeRequestSchema = z.object({
   resumeText: z
