@@ -28,6 +28,16 @@ function optionalFloat(key: string, fallback: number): number {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+function optionalCsv(key: string): string[] {
+  const raw = process.env[key];
+  if (!raw) return [];
+
+  return raw
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
 export const env = {
   // ── AI ────────────────────────────────────────────────────
   /** Google AI Studio API key — required */
@@ -35,6 +45,9 @@ export const env = {
 
   /** Gemini model to use — optional, defaults to gemini-2.5-flash */
   geminiModel: () => process.env.GEMINI_MODEL ?? 'gemini-2.5-flash',
+
+  /** Optional fallback Gemini models, comma-separated */
+  geminiFallbackModels: () => optionalCsv('GEMINI_FALLBACK_MODELS'),
 
   /** Optional system instruction override — prompt is now hardcoded in lib/prompts.ts */
   geminiSystemInstruction: () =>
